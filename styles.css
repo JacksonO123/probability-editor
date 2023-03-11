@@ -41,3 +41,41 @@ body {
 #controls button:active {
   background: rgba(0, 123, 255, 0.45);
 }
+
+#probabilities {
+  position: absolute;
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  max-width: 325px;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  justify-content: center;
+  padding: 10px;
+  flex-wrap: wrap;
+}
+
+#probabilities button {
+  border: 1px solid #ccc;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: 0.15s;
+  cursor: pointer;
+  background: white;
+  user-select: none;
+}
+
+#probabilities button:hover {
+  background: rgba(18, 175, 71, 0.2);
+  border-color: #adadad;
+}
+
+#probabilities button:active {
+  background: rgba(18, 175, 71, 0.4);
+}
+
+#copy-input {
+  display: none;
+}

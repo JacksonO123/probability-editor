@@ -15,6 +15,7 @@ declare global {
   interface Window {
     addProbability: () => void;
     toggleRemoveProbability: () => void;
+    updateUiProbabilities: () => void;
   }
 }
 
@@ -41,6 +42,9 @@ class Text extends SimulationElement {
     c.fillStyle = this.color.toHex();
     c.fillText(this.text, this.pos.x, this.pos.y);
     c.closePath();
+  }
+  setText(text: string) {
+    this.text = text;
   }
 }
 
@@ -85,12 +89,29 @@ let probabilities: number[] = [0.5, 0.5];
 
 window.addProbability = () => {
   probabilities.push(0);
+  window.updateUiProbabilities();
 };
 
 window.toggleRemoveProbability = () => {
   removingProbability = !removingProbability;
   setRemoveBtnText();
 };
+
+window.updateUiProbabilities = () => {
+  const el = document.getElementById('probabilities');
+  if (!el) return;
+  el.innerHTML = '';
+  probabilities.forEach((prob) => {
+    const probEl = document.createElement('button');
+    probEl.innerHTML = prob.toFixed(6);
+    probEl.addEventListener('click', () => {
+      window.navigator.clipboard.writeText(prob + '');
+    });
+    el.appendChild(probEl);
+  });
+};
+
+window.updateUiProbabilities();
 
 function setRemoveBtnText() {
   const btn = document.getElementById('toggle-remove');
@@ -119,9 +140,8 @@ canvas.on('mousedown', (e: MouseEvent) => {
     if (probabilities.length > 1) {
       probabilities.splice(index, 1);
       probabilities = levelProbabilities(probabilities, -1);
+      window.updateUiProbabilities();
     }
-    removingProbability = false;
-    setRemoveBtnText();
     return;
   }
   dragging = true;
@@ -141,6 +161,7 @@ canvas.on('mousemove', (e: MouseEvent) => {
     probabilities = levelProbabilities(probabilities, draggingIndex);
   }
   prev = p;
+  window.updateUiProbabilities();
 });
 
 function levelProbabilities(probabilities: number[], currentIndex: number) {
