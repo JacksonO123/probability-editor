@@ -22,8 +22,8 @@ declare global {
 const canvas = new Simulation('canvas');
 canvas.fitElement();
 
-const width = 1200;
-const height = 800;
+const height = window.innerHeight * 0.48192771084;
+const width = height * 1.75;
 
 class Text extends SimulationElement {
   text: string;
@@ -86,6 +86,7 @@ const zeroText = new Text(
 canvas.add(zeroText);
 
 let probabilities: number[] = [0.5, 0.5];
+console.log(new Vector(window.innerWidth, window.innerHeight).format());
 
 window.addProbability = () => {
   probabilities.push(0);
@@ -103,7 +104,7 @@ window.updateUiProbabilities = () => {
   el.innerHTML = '';
   probabilities.forEach((prob) => {
     const probEl = document.createElement('button');
-    probEl.innerHTML = prob.toFixed(6);
+    probEl.innerHTML = prob.toFixed(3);
     probEl.addEventListener('click', () => {
       window.navigator.clipboard.writeText(prob + '');
     });
