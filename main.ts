@@ -106,7 +106,7 @@ window.updateUiProbabilities = () => {
     const probEl = document.createElement('button');
     probEl.innerHTML = prob.toFixed(3);
     probEl.addEventListener('click', () => {
-      window.navigator.clipboard.writeText(prob + '');
+      window.navigator.clipboard.writeText(prob.toFixed(3));
     });
     el.appendChild(probEl);
   });
