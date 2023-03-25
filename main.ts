@@ -10,12 +10,16 @@ import {
   distance,
   clamp
 } from 'simulationjs';
+import { debounce } from 'lodash';
 
 declare global {
   interface Window {
     addProbability: () => void;
     toggleRemoveProbability: () => void;
     updateUiProbabilities: () => void;
+    handleImportValues: () => void;
+    toggleImportInput: () => void;
+    toggleExportValues: () => void;
   }
 }
 
@@ -85,8 +89,22 @@ const zeroText = new Text(
 );
 canvas.add(zeroText);
 
-let probabilities: number[] = [0.5, 0.5];
-console.log(new Vector(window.innerWidth, window.innerHeight).format());
+const defaultProbabilities = [0.5, 0.5];
+let probabilities: number[] = [];
+
+let storedProbabilities = localStorage.getItem('probabilities');
+if (!storedProbabilities) {
+  localStorage.setItem('probabilities', '[]');
+  probabilities = defaultProbabilities;
+} else {
+  probabilities = JSON.parse(storedProbabilities);
+}
+
+const saveProbabilities = () => {
+  localStorage.setItem('probabilities', JSON.stringify(probabilities));
+};
+
+const debounceSaveProbabilities = debounce(saveProbabilities, 100);
 
 window.addProbability = () => {
   probabilities.push(0);
@@ -110,6 +128,38 @@ window.updateUiProbabilities = () => {
     });
     el.appendChild(probEl);
   });
+};
+
+window.toggleImportInput = () => {
+  const el = document.getElementById('input');
+  if (!el) return;
+  el.classList.toggle('toggled');
+};
+
+window.handleImportValues = () => {
+  const el = document.getElementById('import-input') as HTMLTextAreaElement | null;
+  if (!el) return;
+  const val = el.value;
+  probabilities = val
+    .split(',')
+    .map((item) => item.trim())
+    .filter((item) => item.length !== 0)
+    .map(Number)
+    .map((item) => Math.max(Math.min(item, 1), 0));
+  probabilities = levelProbabilities(probabilities, probabilities.length - 1);
+  debounceSaveProbabilities();
+  window.updateUiProbabilities();
+  window.toggleImportInput();
+};
+
+window.toggleExportValues = () => {
+  const text = probabilities.join(',');
+  const overlay = document.getElementById('export');
+  if (!overlay) return;
+  overlay.classList.toggle('toggled');
+  const el = document.getElementById('export-val');
+  if (!el) return;
+  el.innerHTML = text;
 };
 
 window.updateUiProbabilities();
@@ -143,6 +193,7 @@ canvas.on('mousedown', (e: MouseEvent) => {
       probabilities = levelProbabilities(probabilities, -1);
       window.updateUiProbabilities();
     }
+    debounceSaveProbabilities();
     return;
   }
   dragging = true;
@@ -160,9 +211,10 @@ canvas.on('mousemove', (e: MouseEvent) => {
     probabilities[draggingIndex] += diffY;
     probabilities[draggingIndex] = clamp(probabilities[draggingIndex], 0, 1);
     probabilities = levelProbabilities(probabilities, draggingIndex);
+    debounceSaveProbabilities();
+    window.updateUiProbabilities();
   }
   prev = p;
-  window.updateUiProbabilities();
 });
 
 function levelProbabilities(probabilities: number[], currentIndex: number) {

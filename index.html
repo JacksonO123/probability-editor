@@ -18,6 +18,36 @@
   </head>
   <body>
     <canvas id="canvas"></canvas>
+    <div id="export">
+      <span id="export-val"></span>
+      <button
+        class="btn"
+        onclick="toggleExportValues()"
+      >
+        Cancel
+      </button>
+    </div>
+    <div id="input">
+      <textarea
+        placeholder="Enter values separated by commas"
+        id="import-input"
+        rows="3"
+      ></textarea>
+      <div>
+        <button
+          class="btn"
+          onclick="toggleImportInput()"
+        >
+          Cancel
+        </button>
+        <button
+          class="btn"
+          onclick="handleImportValues()"
+        >
+          Import
+        </button>
+      </div>
+    </div>
     <div id="controls">
       <button onclick="addProbability()">Add probability</button>
       <button
@@ -26,6 +56,8 @@
       >
         Remove probability
       </button>
+      <button onclick="toggleImportInput()">Import csv values</button>
+      <button onclick="toggleExportValues()">Get csv export</button>
     </div>
     <div id="probabilities"></div>
     <input id="copy-input" />

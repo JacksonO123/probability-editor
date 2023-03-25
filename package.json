@@ -4,7 +4,11 @@
     "build": "vite build"
   },
   "dependencies": {
+    "lodash": "^4.17.21",
     "simulationjs": "^3.1.10",
     "vite": "^4.1.4"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.191"
   }
 }
