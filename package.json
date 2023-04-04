@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --port 8080",
     "build": "vite build"
   },
   "dependencies": {
